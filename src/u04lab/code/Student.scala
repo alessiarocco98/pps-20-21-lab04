@@ -1,12 +1,12 @@
 package u04lab.code
 
-import Lists._
-import u04lab.code.Lists.List.Cons // import custom List type (not the one in Scala stdlib)
+import u04lab.code.Lists._ // import custom List type (not the one in Scala stdlib)
 
 trait Student {
   def name: String
   def year: Int
   def enrolling(course: Course): Unit // the student participates to a Course
+  def enrolling2(course: Course*): Unit // refactor the code so that method enrolling accepts a variable argument Course*
   def courses: List[String] // names of course the student participates to
   def hasTeacher(teacher: String): Boolean // is the student participating to a course of this teacher?
 }
@@ -17,12 +17,56 @@ trait Course {
 }
 
 object Student {
-  def apply(name: String, year: Int = 2017): Student = ???
+  def apply(name: String, year: Int = 2017): Student = new StudentImpl(name, year)
+  def apply(name: String): Student = new StudentImpl(name, 2017)
+
+  private class StudentImpl( override val name: String,
+                             override val year: Int) extends Student {
+
+   private var coursesList: List[Course] = List.nil
+
+    override def enrolling(course: Course): Unit = coursesList = List.append(coursesList, List.Cons(course, List.nil))
+
+    override def enrolling2(courses: Course*): Unit = {
+      for (c <- courses) {
+        coursesList = List.append(coursesList, List.Cons(c, List.nil))
+      }
+    }
+    override def courses: List[String] = List.map(coursesList)(v => v.name)
+
+    override def hasTeacher(teacher: String): Boolean = List.contains(List.map(coursesList)(v => v.teacher))(teacher)
+  }
 }
 
 object Course {
-  def apply(name: String, teacher: String): Course = ???
+  def apply(name: String, teacher: String): Course = new CourseImpl(name, teacher)
+
+  private class CourseImpl( override val name: String,
+                             override val teacher: String) extends Course {
+
+  }
 }
+
+/* Version with using case class */
+/*
+case class CourseImpl(override val name: String,
+                      override val teacher: String) extends Course {
+
+}
+
+case class StudentImpl(override val name: String,
+                       override val year: Int) extends Student{
+  private var coursesList: List[Course] = List.nil
+
+  override def enrolling(course: Course): Unit = {
+    coursesList = List.append(coursesList, List.Cons(course, List.nil))
+  }
+
+  override def courses: List[String] = List.map(coursesList)(v => v.name)
+
+  override def hasTeacher(teacher: String): Boolean = List.contains(List.map(coursesList)(v => v.teacher))(teacher)
+}
+*/
 
 object Try extends App {
   val cPPS = Course("PPS","Viroli")
@@ -39,6 +83,10 @@ object Try extends App {
   s3.enrolling(cSDR)
   println(s1.courses, s2.courses, s3.courses) // (Cons(PCD,Cons(PPS,Nil())),Cons(PPS,Nil()),Cons(SDR,Cons(PCD,Cons(PPS,Nil()))))
   println(s1.hasTeacher("Ricci")) // true
+  /* enrolling2 accepts a variable argument Course */
+  s1.enrolling2(cPPS, cPCD)
+  s2.enrolling2(cPPS)
+  s3.enrolling2(cPPS, cPCD, cSDR)
 }
 
 /** Hints:
