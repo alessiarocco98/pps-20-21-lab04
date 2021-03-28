@@ -1,5 +1,7 @@
 package u04lab.code
 
+import u04lab.code.Lists.List.{Cons, append, nil}
+
 import scala.annotation.tailrec
 
 object Lists extends App {
@@ -77,6 +79,23 @@ object Lists extends App {
       case Cons(h,t) if !h.equals(element) => contains(t)(element)
       case _ => false
     }
+
+    /* Optional Exercise */
+    def sameTeacher(courses: List[Course]): Option[String] = ???
+  }
+
+  /* Optional Exercise */
+  trait FactoryList{
+    def createList[A](elements: A*): List[A]
+  }
+  case class FactoryListImpl() extends FactoryList{
+    def createList[A](element: A*): List[A] = {
+      var list: List[A] = nil
+      for(e <- element){
+        list = append(list, Cons(e, nil))
+      }
+      list
+    }
   }
 
   // Note "List." qualification
@@ -100,9 +119,12 @@ object Lists extends App {
   println(foldRightViaFoldleft(lst)(0)(_-_)) // -8
 
   // EXERCISES:
-  println(filterByFlatmap(Cons(10, Cons(20, Nil())))(_>15)) // Cons(20, Nil())
-  println(filterByFlatmap(Cons("a", Cons("bb", Cons("ccc", Nil()))))( _.length <=2)) // Cons("a",Cons("bb", Nil()))
-  println(appendByFold(Cons(3,Cons(7,Nil())), Cons(1,Cons(5,Nil())))) // Cons(3,Cons(7,Cons(1,Cons(5, Nil()))))
-  println(length(Nil())) // 0
-  println(length(Cons(3,Cons(7,Cons(1,Cons(5, Nil())))))) // 4
+//  println(filterByFlatmap(Cons(10, Cons(20, Nil())))(_>15)) // Cons(20, Nil())
+//  println(filterByFlatmap(Cons("a", Cons("bb", Cons("ccc", Nil()))))( _.length <=2)) // Cons("a",Cons("bb", Nil()))
+//  println(appendByFold(Cons(3,Cons(7,Nil())), Cons(1,Cons(5,Nil())))) // Cons(3,Cons(7,Cons(1,Cons(5, Nil()))))
+//  println(length(Nil())) // 0
+//  println(length(Cons(3,Cons(7,Cons(1,Cons(5, Nil())))))) // 4
+
+  val factoryList = new FactoryListImpl()
+  println(factoryList.createList("e1", "e2", "e3"))
 }

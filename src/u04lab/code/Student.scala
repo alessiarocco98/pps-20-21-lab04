@@ -41,6 +41,8 @@ object Student {
 object Course {
   def apply(name: String, teacher: String): Course = new CourseImpl(name, teacher)
 
+  def unapply(c: Course): Option[(String,String)] = Some((c.name,c.teacher)) // Optional Exercise
+
   private class CourseImpl( override val name: String,
                              override val teacher: String) extends Course {
 
